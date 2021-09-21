@@ -8,6 +8,10 @@ import (
 	"net/http"
 )
 
+//
+// item.get API accepts hostname, then these methods are not used
+//
+
 // https://www.zabbix.com/documentation/2.2/manual/api
 // request
 // {

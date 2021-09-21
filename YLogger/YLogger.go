@@ -95,7 +95,7 @@ func (l *YLogger) levelToString(level int8) string {
 	case 5:
 		return "FATAL"
 	default:
-		panic("BAD loglevel " + string(level))
+		panic("BAD loglevel " + fmt.Sprint(level))
 	}
 }
 

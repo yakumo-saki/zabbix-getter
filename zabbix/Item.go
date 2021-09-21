@@ -83,7 +83,7 @@ import (
 
 type GetItemApiResult struct {
 	Jsonrpc string
-	Result  ItemResult
+	Result  []ItemResult
 	Error   string
 	Id      int
 }
@@ -92,13 +92,14 @@ type ItemResult struct {
 	Itemid    string
 	Hostid    string
 	Key_      string
+	Name      string
 	Lastvalue string
 	Lastclock string
 	Units     string
 }
 
 // Authenticate to zabbix and get authenticate token
-func GetItem(url string, token string, hostId string, itemname string) (ItemResult, error) {
+func GetItem(url string, token string, hostname string, itemname string) (ItemResult, error) {
 	jsonTemplate := `
 	{
 		"jsonrpc": "2.0",
@@ -112,15 +113,15 @@ func GetItem(url string, token string, hostId string, itemname string) (ItemResu
 				"lastclock",
 				"units"
 			],
-			"hostids": ["%s"],
 			"filter": {
-				"name": "%s"
+				"key_": "%s",
+				"host": "%s"
 			}
 		},
 		"id": 3,
 		"auth": "%s"
 	}`
-	jsonStr := fmt.Sprintf(jsonTemplate, hostId, itemname, token)
+	jsonStr := fmt.Sprintf(jsonTemplate, itemname, hostname, token)
 
 	fmt.Println(jsonStr)
 
@@ -140,14 +141,16 @@ func GetItem(url string, token string, hostId string, itemname string) (ItemResu
 	fmt.Println(string(byteArray)) // htmlをstringで取得
 
 	// parse JSON
-	var decode_data authenticateResult
+	var decode_data GetItemApiResult
 	if err := json.Unmarshal(byteArray, &decode_data); err != nil {
+		fmt.Println(err)
 		return ItemResult{}, &ZabbixError{Msg: "Error while parsing json.\n" + string(byteArray), Err: err}
 	}
 
 	// 表示
 	fmt.Println(decode_data.Result)
-	// lastvalue
-	// lastclock => unixtime
-	return ItemResult{}, nil
+
+	// check return item key is actualy match. (api is like search)
+
+	return decode_data.Result[0], nil
 }

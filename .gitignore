@@ -1,4 +1,8 @@
 test.sh
+zabbix-getter
+zabbix-getter.exe
+
+build/
 
 # Binaries for programs and plugins
 *.exe
