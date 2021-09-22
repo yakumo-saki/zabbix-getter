@@ -1,67 +1,58 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
+	"os"
+	"path/filepath"
+
+	"github.com/joho/godotenv"
 
 	"github.com/yakumo-saki/zabbix-getter/YLogger"
 	"github.com/yakumo-saki/zabbix-getter/zabbix"
 )
 
 var logger YLogger.Logger
-var zabbixItem zabbixItemStruct
+var Flags ConfigStruct // dotenv + flags
 
-type zabbixItemStruct struct {
+type ConfigStruct struct {
 	Url      string
 	Username string
 	Password string
 	Hostname string
 	Key      string
+	Json     string
+	Loglevel string
 }
 
-func (z zabbixItemStruct) String() string {
-	return "ZBX_URL=" + z.Url + " HOSTNAME=" + z.Hostname + " KEY=" + z.Key
+func (c ConfigStruct) String() string {
+	return "ZBX_URL=" + c.Url + " HOSTNAME=" + c.Hostname + " KEY=" + c.Key
 }
 
 func main() {
 
-	url := flag.String("e", "", "Zabbix Server API endpoint url. example: http://192.168.0.20/api_jsonrpc.php")
-	host := flag.String("s", "", "Zabbix Hostname")
-	key := flag.String("k", "", "Zabbix Item Key")
-
-	flag.Parse()
-
 	logger = &YLogger.YLogger{}
-	logger.SetLogLevel("DEBUG")
+	logger.SetLogLevel("WARN")
 
-	// todo get from .env -> ~/.config/zabbix-getter.conf -> cli option
-	zabbixItem.Url = *url
-	zabbixItem.Hostname = *host
-	zabbixItem.Key = *key
-
-	switch {
-	case zabbixItem.Url == "":
-		logger.F("Please specify zabbix API endpoint")
-		return
-	case zabbixItem.Hostname == "":
-		logger.F("-s option is not set. Please specify zabbix hostname")
-		return
-	case zabbixItem.Hostname == "":
-		logger.F("-s option is not set. Please specify zabbix hostname")
+	config := loadConfig()
+	cfgerr := checkConfig(config)
+	if cfgerr != nil {
+		logger.F(cfgerr)
 		return
 	}
 
 	// todo get username / password from env, .env
-	logger.D(zabbixItem)
+	logger.D(config)
 
-	token, autherr := zabbix.Authenticate(zabbixItem.Url, "Admin", "zabbix")
+	token, autherr := zabbix.Authenticate(config.Url, "Admin", "zabbix")
 	if autherr != nil {
 		logger.F(autherr)
 		logger.F("Error occured at Authenticate")
 		return
 	}
 
-	item, itemerr := zabbix.GetItem(zabbixItem.Url, token, zabbixItem.Hostname, zabbixItem.Key)
+	item, itemerr := zabbix.GetItem(config.Url, token, config.Hostname, config.Key)
 	if itemerr != nil {
 		logger.F(itemerr)
 		logger.F("Error occured at GetItemId")
@@ -69,4 +60,72 @@ func main() {
 	}
 
 	fmt.Println(item.Lastvalue)
+}
+
+func checkConfig(c *ConfigStruct) error {
+
+	switch {
+	case c.Url == "":
+		return errors.New("Please specify zabbix API endpoint")
+	case c.Hostname == "":
+		return errors.New("-s option is not set. Please specify zabbix hostname")
+	case c.Hostname == "":
+		return errors.New("-s option is not set. Please specify zabbix hostname")
+	}
+
+	return nil
+}
+
+func loadConfig() *ConfigStruct {
+	// var conf ConfigStruct
+	env := getConfigFromDotEnv()
+	cli := getConfigFromCommandLine()
+
+	fmt.Println(env, cli)
+	config := mergeConfigs(env, cli)
+
+	return config
+}
+
+func mergeConfigs(env *ConfigStruct, cli *ConfigStruct) *ConfigStruct {
+	return cli
+}
+
+func getConfigFromCommandLine() *ConfigStruct {
+	var cliOption ConfigStruct
+
+	url := flag.String("e", "", "Zabbix Server API endpoint url. example: http://192.168.0.20/api_jsonrpc.php")
+	host := flag.String("s", "", "Zabbix Hostname")
+	key := flag.String("k", "", "Zabbix Item Key")
+	loglevel := flag.String("loglevel", "", "Loglevel TRACE<DEBUG<INFO<WARN<ERROR<FATAL")
+
+	flag.Parse()
+
+	// todo get from .env -> ~/.config/zabbix-getter.conf -> cli option
+	cliOption.Url = *url
+	cliOption.Hostname = *host
+	cliOption.Key = *key
+	cliOption.Loglevel = *loglevel
+
+	return &cliOption
+}
+
+func getConfigFromDotEnv() *ConfigStruct {
+	var conf ConfigStruct
+	var dotenv string
+
+	confdir, configerr := os.UserConfigDir()
+	if configerr != nil {
+		logger.E(os.Stderr, configerr)
+		return &conf
+	}
+
+	fmt.Println(filepath.Join(confdir, "zabbix-getter.conf"))
+
+	enverr := godotenv.Load(dotenv)
+	if enverr != nil {
+		logger.F("Error loading .env file:", dotenv)
+	}
+
+	return &conf
 }
