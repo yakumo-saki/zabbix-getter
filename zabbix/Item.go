@@ -89,13 +89,13 @@ type GetItemApiResult struct {
 }
 
 type ItemResult struct {
-	Itemid    string
-	Hostid    string
-	Key_      string
-	Name      string
-	Lastvalue string
-	Lastclock string
-	Units     string
+	Itemid    string `json:"itemId"`
+	Hostid    string `json:"hostId"`
+	Key_      string `json:"key"`
+	Name      string `json:"name"`
+	Lastvalue string `json:"value"`
+	Lastclock string `json:"lastClock"`
+	Units     string `json:"units"`
 }
 
 // Authenticate to zabbix and get authenticate token

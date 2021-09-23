@@ -45,7 +45,12 @@ func main() {
 
 	switch strings.ToUpper(cfg.Output) {
 	case "JSON":
-		fmt.Println(json.Marshal(item))
+		json, err := json.Marshal(item)
+		if err != nil {
+			logger.F(err)
+			panic(err)
+		}
+		fmt.Println(string(json))
 	default:
 		fmt.Println(item.Lastvalue)
 	}

@@ -54,6 +54,7 @@ func getConfigFromCommandLine() *ConfigStruct {
 	host := flag.String("s", "", "Zabbix Hostname")
 	key := flag.String("k", "", "Zabbix Item Key")
 	loglevel := flag.String("loglevel", "", "Loglevel TRACE<DEBUG<INFO<WARN<ERROR<FATAL")
+	output := flag.String("output", "VALUE", "Output type [VALUE | JSON]")
 
 	flag.Parse()
 
@@ -62,6 +63,7 @@ func getConfigFromCommandLine() *ConfigStruct {
 	cliOption.Hostname = *host
 	cliOption.Key = *key
 	cliOption.Loglevel = *loglevel
+	cliOption.Output = *output
 
 	return &cliOption
 }
