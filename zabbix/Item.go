@@ -91,7 +91,7 @@ type GetItemApiResult struct {
 type ItemResult struct {
 	Itemid    string `json:"itemId"`
 	Hostid    string `json:"hostId"`
-	Key_      string `json:"key"`
+	Key_      string `json:"key_"`
 	Name      string `json:"name"`
 	Lastvalue string `json:"value"`
 	Lastclock string `json:"lastClock"`
@@ -155,6 +155,7 @@ func GetItem(url string, token string, hostname string, itemname string) (ItemRe
 	var ret ItemResult
 	retOK := false
 	for _, v := range decode_data.Result {
+		fmt.Println(v, v.Key_, itemname)
 		if v.Key_ == itemname {
 			ret = v
 			retOK = true

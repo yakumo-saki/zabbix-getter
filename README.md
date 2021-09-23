@@ -33,7 +33,7 @@ LOGLEVEL=WARN
 $ zabbix-getter -e http://192.168.1.100/api_jsonrpc.php -s test -k testitem
 123
 
-$ zabbix-getter -json -e http://192.168.1.100/api_jsonrpc.php -s test -k testitem
+$ zabbix-getter -e http://192.168.1.100/api_jsonrpc.php -s test -k testitem
 {}
 
 ## 修了コード
