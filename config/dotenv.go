@@ -10,13 +10,28 @@ import (
 
 func GetConfigFromDotEnv() *ConfigStruct {
 	var conf ConfigStruct
+
+	loadDotEnvFiles()
+
+	conf.Hostname = os.Getenv("HOSTNAME")
+	conf.Url = os.Getenv("URL")
+	conf.Key = os.Getenv("KEY")
+	conf.Output = os.Getenv("OUTPUT")
+	conf.Loglevel = os.Getenv("LOGLEVEL")
+	conf.Password = os.Getenv("PASSWORD")
+	conf.Username = os.Getenv("USERNAME")
+
+	return &conf
+}
+
+func loadDotEnvFiles() error {
 	var dotenv string
 	CONFFILE := "zabbix-getter.conf"
 
 	confdir, configerr := os.UserConfigDir()
 	if configerr != nil {
 		logger.E(os.Stderr, configerr)
-		return &conf
+		return configerr
 	}
 
 	dotenv = filepath.Join(confdir, CONFFILE)
@@ -30,8 +45,7 @@ func GetConfigFromDotEnv() *ConfigStruct {
 		pair := strings.SplitN(e, "=", 2)
 		logger.T(pair[0], " => ", pair[1])
 	}
-
-	return &conf
+	return nil
 }
 
 // 実行ファイルのあるディレクトリを取得
