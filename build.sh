@@ -1,7 +1,6 @@
 #!/bin/bash -eu
 
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
-cd $SCRIPT_DIR
 
 VERSION=`cat ./global/version.go | grep -o "\".*\"" | sed s/\"//g`
 
@@ -39,4 +38,5 @@ zip ${RELEASE_DIR}/${BIN_BASENAME}_${VERSION}_win32.zip ${BIN_DIR}/${BIN_BASENAM
 build_unixlike linux amd64
 build_unixlike linux arm
 build_unixlike linux arm64
-
+build_unixlike darwin amd64
+build_unixlike darwin arm64
