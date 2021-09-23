@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/yakumo-saki/zabbix-getter/YLogger"
@@ -23,6 +24,7 @@ func main() {
 	cfgerr := config.CheckConfig(cfg)
 	if cfgerr != nil {
 		logger.F(cfgerr)
+		os.Exit(10)
 		return
 	}
 
@@ -32,6 +34,7 @@ func main() {
 	if autherr != nil {
 		logger.F(autherr)
 		logger.F("Error occured at Authenticate")
+		os.Exit(11)
 		return
 	}
 
@@ -39,6 +42,7 @@ func main() {
 	if itemerr != nil {
 		logger.F(itemerr)
 		logger.F("Error occured at GetItemId")
+		os.Exit(12)
 		return
 	}
 

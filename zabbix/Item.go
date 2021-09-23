@@ -152,6 +152,19 @@ func GetItem(url string, token string, hostname string, itemname string) (ItemRe
 	// logger.T(decode_data.Result)
 
 	// check return item key is actualy match. (api is like search)
+	var ret ItemResult
+	retOK := false
+	for _, v := range decode_data.Result {
+		if v.Key_ == itemname {
+			ret = v
+			retOK = true
+			break
+		}
+	}
 
-	return decode_data.Result[0], nil
+	if !retOK {
+		return ItemResult{}, &ZabbixError{Msg: "No matching item in result."}
+	}
+
+	return ret, nil
 }

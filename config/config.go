@@ -1,17 +1,11 @@
 package config
 
-import (
-	"flag"
-
-	"github.com/yakumo-saki/zabbix-getter/YLogger"
-)
-
 // var logger = YLogger.GetLogger("zabbix")
 
 // 設定をロードします
 func LoadConfig() *ConfigStruct {
 	// var conf ConfigStruct
-	cli := getConfigFromCommandLine()
+	cli := GetConfigFromCommandLine()
 	env := GetConfigFromDotEnv()
 
 	config := mergeConfigs(env, cli)
@@ -49,29 +43,4 @@ func getOneValue(env string, cli string) string {
 		logger.F("Unknown condition ", env, cli)
 		panic("Unknown condition")
 	}
-}
-
-func getConfigFromCommandLine() *ConfigStruct {
-	var cliOption ConfigStruct
-
-	url := flag.String("e", "", "Zabbix Server API endpoint url. example: http://192.168.0.20/api_jsonrpc.php")
-	host := flag.String("s", "", "Zabbix Hostname")
-	key := flag.String("k", "", "Zabbix Item Key")
-	loglevel := flag.String("loglevel", "", "Loglevel TRACE<DEBUG<INFO<WARN<ERROR<FATAL")
-	output := flag.String("output", "VALUE", "Output type [VALUE | JSON]")
-
-	flag.Parse()
-
-	// todo get from .env -> ~/.config/zabbix-getter.conf -> cli option
-	cliOption.Url = *url
-	cliOption.Hostname = *host
-	cliOption.Key = *key
-	cliOption.Loglevel = *loglevel
-	cliOption.Output = *output
-
-	if cliOption.Loglevel != "" {
-		YLogger.SetLogLevel(cliOption.Loglevel)
-	}
-
-	return &cliOption
 }

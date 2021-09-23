@@ -31,6 +31,14 @@ $ zabbix-getter -e http://192.168.1.100/api_jsonrpc.php -s test -k testitem
 $ zabbix-getter -json -e http://192.168.1.100/api_jsonrpc.php -s test -k testitem
 {}
 
+## 修了コード
+
+* 0 正常
+* 2 ヘルプ (-h) が指定された
+* 10以上 異常修了
+
+基本的には 0 以外はすべて異常終了です。
+
 ## 設定
 
 優先順位は、環境変数＜{CONFIG_DIR}/zabbix-getter.conf＜{EXEC_DIR}/zabbix-getter.conf＜＜＜コマンドラインオプション
