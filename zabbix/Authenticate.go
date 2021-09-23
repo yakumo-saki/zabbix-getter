@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/yakumo-saki/zabbix-getter/YLogger"
 )
 
 type authenticateResult struct {
@@ -13,6 +15,8 @@ type authenticateResult struct {
 	Result  string
 	Id      int
 }
+
+var logger = YLogger.GetLogger("zabbix")
 
 // Authenticate to zabbix and get authenticate token
 func Authenticate(url string, username string, password string) (string, error) {
@@ -35,7 +39,7 @@ func Authenticate(url string, username string, password string) (string, error) 
 	// {"jsonrpc":"2.0","result":"057466f9a6cb65b3d57d9460cc792b9b","id":1}
 	byteArray, _ := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
-	fmt.Println(string(byteArray)) // htmlをstringで取得
+	logger.D(string(byteArray)) // htmlをstringで取得
 
 	// parse JSON
 	var decode_data authenticateResult
@@ -44,6 +48,6 @@ func Authenticate(url string, username string, password string) (string, error) 
 	}
 
 	// 表示
-	fmt.Println(decode_data.Result)
+	logger.D(decode_data.Result)
 	return decode_data.Result, nil
 }

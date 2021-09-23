@@ -1,6 +1,7 @@
 test.sh
 zabbix-getter
 zabbix-getter.exe
+zabbix-getter.conf
 
 build/
 
