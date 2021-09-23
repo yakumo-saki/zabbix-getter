@@ -21,6 +21,8 @@ func GetConfigFromDotEnv() *ConfigStruct {
 	conf.Password = os.Getenv("PASSWORD")
 	conf.Username = os.Getenv("USERNAME")
 
+	logger.T("config from env:", conf)
+
 	return &conf
 }
 

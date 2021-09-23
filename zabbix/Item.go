@@ -123,7 +123,7 @@ func GetItem(url string, token string, hostname string, itemname string) (ItemRe
 	}`
 	jsonStr := fmt.Sprintf(jsonTemplate, itemname, hostname, token)
 
-	fmt.Println(jsonStr)
+	logger.T("request", jsonStr)
 
 	req, _ := http.NewRequest("POST", url, bytes.NewBuffer([]byte(jsonStr)))
 	req.Header.Set("Content-Type", "application/json")
@@ -138,7 +138,7 @@ func GetItem(url string, token string, hostname string, itemname string) (ItemRe
 	// {"jsonrpc":"2.0","result":"057466f9a6cb65b3d57d9460cc792b9b","id":1}
 	byteArray, _ := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
-	fmt.Println(string(byteArray)) // htmlをstringで取得
+	logger.T("response", string(byteArray)) // htmlをstringで取得
 
 	// parse JSON
 	var decode_data GetItemApiResult
@@ -148,7 +148,7 @@ func GetItem(url string, token string, hostname string, itemname string) (ItemRe
 	}
 
 	// 表示
-	fmt.Println(decode_data.Result)
+	logger.T(decode_data.Result)
 
 	// check return item key is actualy match. (api is like search)
 

@@ -29,7 +29,7 @@ func main() {
 	// todo get username / password from env, .env
 	logger.D(cfg)
 
-	token, autherr := zabbix.Authenticate(cfg.Url, "Admin", "zabbix")
+	token, autherr := zabbix.Authenticate(cfg.Url, cfg.Username, cfg.Password)
 	if autherr != nil {
 		logger.F(autherr)
 		logger.F("Error occured at Authenticate")
