@@ -26,8 +26,7 @@ func main() {
 		return
 	}
 
-	// todo get username / password from env, .env
-	logger.D(cfg)
+	YLogger.SetLogLevel(cfg.Loglevel)
 
 	token, autherr := zabbix.Authenticate(cfg.Url, cfg.Username, cfg.Password)
 	if autherr != nil {
@@ -43,15 +42,14 @@ func main() {
 		return
 	}
 
-	switch strings.ToUpper(cfg.Output) {
-	case "JSON":
+	if strings.ToUpper(cfg.Output) == "VALUE" {
+		fmt.Println(string(item.Lastvalue))
+	} else {
 		json, err := json.Marshal(item)
 		if err != nil {
 			logger.F(err)
 			panic(err)
 		}
 		fmt.Println(string(json))
-	default:
-		fmt.Println(item.Lastvalue)
 	}
 }

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=v0.0.1
+VERSION=v1.0.0
 
 BIN_BASENAME=zabbix-getter
 ENTRYPOINT=zabbix-getter.go

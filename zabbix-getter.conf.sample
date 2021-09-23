@@ -1,4 +1,4 @@
 USERNAME=Admin
 PASSWORD=zabbix
-URL=http://192.168.1.123/api_jsonrpc.php
-LOGLEVEL=INFO
+ENDPOINT=http://192.168.1.123/api_jsonrpc.php
+LOGLEVEL=WARN

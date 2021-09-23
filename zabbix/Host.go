@@ -80,7 +80,7 @@ func GetHostId(url string, token string, hostname string) (string, error) {
 		"auth": "%s"
 	}`
 	jsonStr := fmt.Sprintf(jsonTemplate, hostname, token)
-	fmt.Println(jsonStr)
+	logger.T("Response\n", jsonStr)
 
 	req, _ := http.NewRequest("POST", url, bytes.NewBuffer([]byte(jsonStr)))
 	req.Header.Set("Content-Type", "application/json")
@@ -95,7 +95,7 @@ func GetHostId(url string, token string, hostname string) (string, error) {
 	// {"jsonrpc":"2.0","result":"057466f9a6cb65b3d57d9460cc792b9b","id":1}
 	byteArray, _ := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
-	fmt.Println(string(byteArray)) // htmlをstringで取得
+	logger.T("Response\n", string(byteArray)) // htmlをstringで取得
 
 	// parse JSON
 	var decode_data hostApiResult

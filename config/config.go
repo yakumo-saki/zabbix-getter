@@ -2,6 +2,8 @@ package config
 
 import (
 	"flag"
+
+	"github.com/yakumo-saki/zabbix-getter/YLogger"
 )
 
 // var logger = YLogger.GetLogger("zabbix")
@@ -9,10 +11,12 @@ import (
 // 設定をロードします
 func LoadConfig() *ConfigStruct {
 	// var conf ConfigStruct
-	env := GetConfigFromDotEnv()
 	cli := getConfigFromCommandLine()
+	env := GetConfigFromDotEnv()
 
 	config := mergeConfigs(env, cli)
+	SetDefaultConfig(config)
+	CheckConfig(config)
 
 	logger.T("Config = ", config)
 
@@ -64,6 +68,10 @@ func getConfigFromCommandLine() *ConfigStruct {
 	cliOption.Key = *key
 	cliOption.Loglevel = *loglevel
 	cliOption.Output = *output
+
+	if cliOption.Loglevel != "" {
+		YLogger.SetLogLevel(cliOption.Loglevel)
+	}
 
 	return &cliOption
 }

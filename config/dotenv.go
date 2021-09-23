@@ -14,7 +14,7 @@ func GetConfigFromDotEnv() *ConfigStruct {
 	loadDotEnvFiles()
 
 	conf.Hostname = os.Getenv("HOSTNAME")
-	conf.Url = os.Getenv("URL")
+	conf.Url = os.Getenv("ENDPOINT")
 	conf.Key = os.Getenv("KEY")
 	conf.Output = os.Getenv("OUTPUT")
 	conf.Loglevel = os.Getenv("LOGLEVEL")
@@ -65,7 +65,8 @@ func getExecuteDir() string {
 func loadDotEnv(path string) {
 	err := godotenv.Load(path)
 	if err != nil {
-		logger.I("Error loading .env file:" + path)
+		logger.D("Error loading .env file:" + path)
+		return
 	}
 	logger.D(path + " loaded.")
 }

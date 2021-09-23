@@ -5,19 +5,30 @@ import "errors"
 // 設定のチェック、だめならerror。OKならnil
 func CheckConfig(c *ConfigStruct) error {
 
-	switch {
-	case c.Username == "":
+	// 未設定ならデフォルト値をセットするもの
+	if c.Output == "" {
+		c.Output = "JSON"
+	}
+	if c.Loglevel == "" {
+		c.Output = "WARN"
+	}
+
+	if c.Username == "" {
 		return errors.New("please specify zabbix username")
-	case c.Password == "":
+	}
+
+	if c.Password == "" {
 		return errors.New("please specify zabbix password")
-	case c.Url == "":
+	}
+
+	if c.Url == "" {
 		return errors.New("please specify zabbix API endpoint")
-	case c.Hostname == "":
+	}
+	if c.Hostname == "" {
 		return errors.New("please specify zabbix hostname")
-	case c.Key == "":
+	}
+	if c.Key == "" {
 		return errors.New("please specify zabbix item key")
-	case c.Loglevel == "":
-		// OK
 	}
 
 	return nil

@@ -2,6 +2,27 @@
 
 zabbix-senderの逆でzabbixから値を取得します。
 
+## 初期設定
+
+以下の内容の設定ファイルを以下の **どちらか** の場所に作成します。
+設定値は適切に変更してください。
+
+* ~/.config/zabbix-getter.conf (Linux)
+* %APPDATA%\zabbix-getter.conf (Windows)
+* $HOME/Library/Preferences/zabbix-getter.conf (macOS)
+* 実行ファイルと同ディレクトリのzabbix-getter.conf
+
+About UserConfigDir
+https://github.com/golang/go/issues/29960
+
+```
+USERNAME=Admin
+PASSWORD=zabbix
+ENDPOINT=http://192.168.1.123/api_jsonrpc.php
+OUTPUT=JSON
+LOGLEVEL=WARN
+```
+
 ## 実行例
 
 $ zabbix-getter -e http://192.168.1.100/api_jsonrpc.php -s test -k testitem
@@ -12,7 +33,9 @@ $ zabbix-getter -json -e http://192.168.1.100/api_jsonrpc.php -s test -k testite
 
 ## 設定
 
-優先順位は、環境変数＞コマンドラインオプション （後勝ちで上書き）
+優先順位は、環境変数＜{CONFIG_DIR}/zabbix-getter.conf＜{EXEC_DIR}/zabbix-getter.conf＜＜＜コマンドラインオプション
+コマンドラインオプションはすべてを上書きできます。それ以外は上記の順番で　先勝ち（上書きしない）　です
+
 
 | オプション   | 環境変数   | デフォルト | 設定内容     | サンプル                              |
 | ---------- | --------- | ---------| ------------ | ------------------------------------ |
@@ -21,6 +44,7 @@ $ zabbix-getter -json -e http://192.168.1.100/api_jsonrpc.php -s test -k testite
 | -e         | ENDPOINT  | ""       | zabbix APIエンドポイント           | http://192.168.1.100/api_jsonrpc.php |
 | -s         | (なし)     | ""       | zabbixに登録されたホスト名（キーの方） | testhost |
 | -k         | (なし)     | ""       | ホストアイテムのキー                 | system.hostname |
-| -loglevel  | LOG_LEVEL | WARN     | ログ出力レベル TRACE<DEBUG<INFO<WARN<ERROR<FATAL | (CLI) -loglevel TRACE |
+| -loglevel  | LOGLEVEL  | WARN     | ログ出力レベル TRACE<DEBUG<INFO<WARN<ERROR<FATAL | (CLI) -loglevel TRACE |
 | -h         | (なし)     | -        | ヘルプメッセージを出力                |  |
-| -output     | OUTPUT  | VALUE     | 出力を [VALUE | JSON] にする。VALUEは値のみ出力 | (CLI) -output JSON |
+| -output     | OUTPUT   | VALUE     | 出力を [JSON | VALUE] にする。VALUEは値のみ出力 | (CLI) -output JSON |
+

@@ -11,7 +11,7 @@ type ConfigStruct struct {
 }
 
 func (c ConfigStruct) String() string {
-	return "ZBX_URL=" + c.Url + " USERNAME=" + c.Username + " PASSWORD=" + c.Password +
+	return "ENDPOINT=" + c.Url + " USERNAME=" + c.Username + " PASSWORD=<HIDDEN>" +
 		" HOSTNAME=" + c.Hostname + " KEY=" + c.Key +
 		" OUTPUT=" + c.Output + " LOGLEVEL=" + c.Loglevel
 }
