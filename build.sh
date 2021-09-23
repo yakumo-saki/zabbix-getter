@@ -1,6 +1,9 @@
-#!/bin/bash
+#!/bin/bash -eu
 
-VERSION=v1.0.0
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+cd $SCRIPT_DIR
+
+VERSION=`cat ./global/version.go | grep -o "\".*\"" | sed s/\"//g`
 
 BIN_BASENAME=zabbix-getter
 ENTRYPOINT=zabbix-getter.go
@@ -22,7 +25,7 @@ function build_unixlike () {
     FINAL_PATH=${RELEASE_DIR}/${BIN_BASENAME}_${VERSION}_$1_$2.tar.gz
     GOOS=$1 GOARCH=$2 go build -o ${BIN_DIR}/${BIN_BASENAME} ${ENTRYPOINT}
     cp ${BIN_DIR}/${BIN_BASENAME} ${BIN_DIR}/${BIN_BASENAME}_$1_$2
-    tar cvzf ${FINAL_PATH} ${BIN_BASENAME}
+    tar -C ${BIN_DIR}/ -cvzf ${FINAL_PATH} ${BIN_BASENAME}
     
     echo "done => ${FINAL_PATH}"
 }
