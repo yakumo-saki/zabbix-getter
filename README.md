@@ -31,6 +31,8 @@ OUTPUT=JSON
 LOGLEVEL=WARN
 ```
 
+※ 詳細は設定についてをご覧ください。
+
 ## 実行例
 
 $ zabbix-getter -s test -k testitem
@@ -67,14 +69,14 @@ $ zabbix-getter -s test -k testitem
 
 上記の順で後勝ちで設定を行えます。
 
-| オプション   | 環境変数   | デフォルト | 設定内容     | サンプル                              |
-| ---------- | --------- | ---------| ------------ | ------------------------------------ |
-| （なし）     | USERNAME  | ""      | zabbixユーザー名                  | Admin |
-| （なし）     | PASSWORD  | ""      | zabbixパスワード                  | zabbix |
-| -e         | ENDPOINT  | ""       | zabbix APIエンドポイント           | http://192.168.1.100/api_jsonrpc.php |
-| -s         | (なし)     | ""       | zabbixに登録されたホスト名（キーの方） | testhost |
-| -k         | (なし)     | ""       | ホストアイテムのキー                 | system.hostname |
-| -loglevel  | LOGLEVEL  | WARN     | ログ出力レベル TRACE<DEBUG<INFO<WARN<ERROR<FATAL | (CLI) -loglevel TRACE |
-| -h         | (なし)     | -        | ヘルプメッセージを出力                |  |
-| -output     | OUTPUT   | VALUE     | 出力を [JSON | VALUE] にする。VALUEは値のみ出力 | (CLI) -output JSON |
+| オプション        | 環境変数   | デフォルト | 設定内容     | サンプル                              |
+| --------------- | --------- | ---------| ------------ | ------------------------------------ |
+| -h              | (なし)     | -        | ヘルプメッセージを出力                |  |
+| （なし）          | USERNAME  | ""      | zabbixユーザー名。環境変数か設定ファイルで指定してください。 | Admin |
+| （なし）          | PASSWORD  | ""      | zabbixパスワード。環境変数か設定ファイルで指定してください。 | zabbix |
+| -e , --endpoint | ENDPOINT  | ""       | zabbix APIエンドポイント           | http://192.168.1.100/api_jsonrpc.php |
+| -s , --hostname | (なし)     | ""       | zabbixに登録されたホスト名（キーの方） | testhost |
+| -k , --key      | (なし)     | ""       | ホストアイテムのキー                 | system.hostname |
+| -l , --loglevel | LOGLEVEL  | WARN     | ログ出力レベル TRACE<DEBUG<INFO<WARN<ERROR<FATAL | (CLI) -loglevel TRACE |
+| -o , --output   | OUTPUT   | VALUE     | 出力を [JSON | VALUE] にする。VALUEは値のみ出力 | (CLI) -output JSON |
 
