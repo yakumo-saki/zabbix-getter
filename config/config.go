@@ -6,9 +6,14 @@ package config
 func LoadConfig() *ConfigStruct {
 	// var conf ConfigStruct
 	cli := GetConfigFromCommandLine()
-	env := GetConfigFromDotEnv()
+	dotConfig, _ := LoadFromDotConfig()
+	execConfig, _ := LoadFromExecDir()
+	envConfig := LoadFromEnvValue()
 
-	config := mergeConfigs(env, cli)
+	config := mergeConfigs(execConfig, dotConfig)
+	config = mergeConfigs(config, envConfig)
+	config = mergeConfigs(config, cli)
+
 	SetDefaultConfig(config)
 	CheckConfig(config)
 
@@ -17,30 +22,30 @@ func LoadConfig() *ConfigStruct {
 	return config
 }
 
-func mergeConfigs(env *ConfigStruct, cli *ConfigStruct) *ConfigStruct {
+func mergeConfigs(base *ConfigStruct, overwrite *ConfigStruct) *ConfigStruct {
 
 	var conf ConfigStruct
-	conf.Url = getOneValue(env.Url, cli.Url)
-	conf.Username = getOneValue(env.Username, cli.Username)
-	conf.Hostname = getOneValue(env.Hostname, cli.Hostname)
-	conf.Password = getOneValue(env.Password, cli.Password)
-	conf.Key = getOneValue(env.Key, cli.Key)
-	conf.Output = getOneValue(env.Output, cli.Output)
-	conf.Loglevel = getOneValue(env.Loglevel, cli.Loglevel)
+	conf.Url = getOneValue(base.Url, overwrite.Url)
+	conf.Username = getOneValue(base.Username, overwrite.Username)
+	conf.Hostname = getOneValue(base.Hostname, overwrite.Hostname)
+	conf.Password = getOneValue(base.Password, overwrite.Password)
+	conf.Key = getOneValue(base.Key, overwrite.Key)
+	conf.Output = getOneValue(base.Output, overwrite.Output)
+	conf.Loglevel = getOneValue(base.Loglevel, overwrite.Loglevel)
 
 	return &conf
 }
 
-func getOneValue(env string, cli string) string {
+func getOneValue(base string, overwrite string) string {
 	switch {
-	case env == "" && cli == "":
+	case base == "" && overwrite == "":
 		return ""
-	case cli != "":
-		return cli
-	case env != "" && cli == "":
-		return env
+	case overwrite != "":
+		return overwrite
+	case base != "" && overwrite == "":
+		return base
 	default:
-		logger.F("Unknown condition ", env, cli)
+		logger.F("Unknown condition ", base, overwrite)
 		panic("Unknown condition")
 	}
 }

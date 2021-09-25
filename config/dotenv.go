@@ -3,15 +3,43 @@ package config
 import (
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/joho/godotenv"
 )
 
-func GetConfigFromDotEnv() *ConfigStruct {
-	var conf ConfigStruct
+const CONFFILE = "zabbix-getter.conf"
 
-	loadDotEnvFiles()
+// ~/.config/zabbix-getter.conf
+//
+func LoadFromDotConfig() (*ConfigStruct, error) {
+
+	confdir, configerr := os.UserConfigDir()
+	if configerr != nil {
+		var c ConfigStruct
+		logger.E(os.Stderr, configerr)
+		return &c, configerr
+	}
+
+	dotenv := filepath.Join(confdir, CONFFILE)
+	cfg, _ := loadDotEnv(dotenv)
+
+	return cfg, nil
+}
+
+// 実行時ファイルのディレクトリのある zabbix-getter.conf
+//
+func LoadFromExecDir() (*ConfigStruct, error) {
+	dotenv := filepath.Join(getExecuteDir(), CONFFILE)
+	cfg, _ := loadDotEnv(dotenv)
+
+	return cfg, nil
+}
+
+// 実行時の環境変数からconfigを生成
+//
+func LoadFromEnvValue() *ConfigStruct {
+
+	var conf ConfigStruct
 
 	conf.Hostname = os.Getenv("HOSTNAME")
 	conf.Url = os.Getenv("ENDPOINT")
@@ -21,33 +49,7 @@ func GetConfigFromDotEnv() *ConfigStruct {
 	conf.Password = os.Getenv("PASSWORD")
 	conf.Username = os.Getenv("USERNAME")
 
-	logger.T("config from env:", conf)
-
 	return &conf
-}
-
-func loadDotEnvFiles() error {
-	var dotenv string
-	CONFFILE := "zabbix-getter.conf"
-
-	confdir, configerr := os.UserConfigDir()
-	if configerr != nil {
-		logger.E(os.Stderr, configerr)
-		return configerr
-	}
-
-	dotenv = filepath.Join(confdir, CONFFILE)
-	loadDotEnv(dotenv)
-
-	dotenv = filepath.Join(getExecuteDir(), CONFFILE)
-	loadDotEnv(dotenv)
-
-	// show all environment
-	for _, e := range os.Environ() {
-		pair := strings.SplitN(e, "=", 2)
-		logger.T(pair[0], " => ", pair[1])
-	}
-	return nil
 }
 
 // 実行ファイルのあるディレクトリを取得
@@ -62,11 +64,24 @@ func getExecuteDir() string {
 
 // dotenvファイルをロードする
 // 存在しなくてもスルー
-func loadDotEnv(path string) {
-	err := godotenv.Load(path)
+func loadDotEnv(path string) (*ConfigStruct, error) {
+
+	var conf ConfigStruct
+
+	m, err := godotenv.Read(path)
 	if err != nil {
 		logger.D("Error loading .env file:" + path)
-		return
+		return &conf, err
 	}
+
+	conf.Hostname = m["HOSTNAME"]
+	conf.Url = m["ENDPOINT"]
+	conf.Key = m["KEY"]
+	conf.Output = m["OUTPUT"]
+	conf.Loglevel = m["LOGLEVEL"]
+	conf.Password = m["PASSWORD"]
+	conf.Username = m["USERNAME"]
+
 	logger.D(path + " loaded.")
+	return &conf, nil
 }

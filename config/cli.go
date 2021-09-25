@@ -12,7 +12,7 @@ import (
 func setHelpMessage() {
 	pflag.Usage = func() {
 		o := os.Stderr
-		fmt.Fprintf(o, "%s\n", os.Args[0])
+		fmt.Fprintf(o, "%s (%s)\n", os.Args[0], global.Url)
 		fmt.Fprintf(o, "Version: %s\n", global.Version)
 		fmt.Fprintf(o, "\n")
 		fmt.Fprintf(o, "Usage:\n")
