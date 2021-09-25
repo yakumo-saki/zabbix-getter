@@ -9,8 +9,10 @@ Windows: exeファイルを適当な場所においてください。
 
 ## 初期設定
 
-以下の内容の設定ファイルを以下の **いずれか** の場所に作成します。
+以下の内容の設定ファイルを以下の場所に作成します。
 設定値は適切に変更してください。
+複数の場所に設定ファイルを作成した場合、ルールに従って上書きされますが、
+あまり意味がないのでオススメはしません。
 
 * ~/.config/zabbix-getter.conf (Linux)
 * %APPDATA%\zabbix-getter.conf (Windows)
@@ -30,11 +32,22 @@ LOGLEVEL=WARN
 
 ## 実行例
 
-$ zabbix-getter -e http://192.168.1.100/api_jsonrpc.php -s test -k testitem
-123
+$ zabbix-getter -s test -k testitem
+1234
 
-$ zabbix-getter -e http://192.168.1.100/api_jsonrpc.php -s test -k testitem
-{}
+$ zabbix-getter -s test -k testitem
+
+```
+{
+  "itemId": "47991",
+  "hostId": "10322",
+  "key_": "testitem",
+  "name": "test item name #1",
+  "value": "1234",
+  "lastClock": "0",
+  "units": "test_units"
+}
+```
 
 ## 修了コード
 
