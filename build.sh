@@ -2,7 +2,7 @@
 
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
 
-VERSION=`cat ./global/version.go | grep -o "\".*\"" | sed s/\"//g`
+VERSION=` cat ./global/version.go | grep -o "Version.*\".*\"" | sed -e 's/.*=\s//g' -e 's/"//g'`
 
 BIN_BASENAME=zabbix-getter
 ENTRYPOINT=zabbix-getter.go
