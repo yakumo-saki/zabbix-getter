@@ -144,7 +144,7 @@ func GetItem(url string, token string, hostname string, itemname string) (ItemRe
 	// parse JSON
 	var decode_data GetItemApiResult
 	if err := json.Unmarshal(byteArray, &decode_data); err != nil {
-		fmt.Println(err)
+		logger.D(err)
 		return ItemResult{}, &ZabbixError{Msg: "Error while parsing json.\n" + string(byteArray), Err: err}
 	}
 
@@ -155,7 +155,7 @@ func GetItem(url string, token string, hostname string, itemname string) (ItemRe
 	var ret ItemResult
 	retOK := false
 	for _, v := range decode_data.Result {
-		fmt.Println(v, v.Key_, itemname)
+		// fmt.Println(v, v.Key_, itemname)
 		if v.Key_ == itemname {
 			ret = v
 			retOK = true
