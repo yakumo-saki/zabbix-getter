@@ -5,6 +5,7 @@ zabbix-senderの逆でzabbixから値を取得します。
 ## インストール
 
 Windows: exeファイルを適当な場所においてください。
+Arch Linux： AURからインストール可能です。 `yay -S zabbix-getter`
 それ以外： 実行ファイルを展開して `chmod +x zabbix-getter` してください
 
 ## 初期設定

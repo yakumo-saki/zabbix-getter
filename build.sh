@@ -8,14 +8,19 @@ BIN_BASENAME=zabbix-getter
 ENTRYPOINT=zabbix-getter.go
 
 BUILD_DIR=./build
-BIN_DIR=${BUILD_DIR}/bin
-RELEASE_DIR=${BUILD_DIR}/release
+BIN_DIR=${SCRIPT_DIR}/${BUILD_DIR}/bin
+WORK_DIR=${SCRIPT_DIR}/${BUILD_DIR}/work
+RELEASE_DIR=${SCRIPT_DIR}/${BUILD_DIR}/release
 
 # delete build dir
 rm -rf ${BUILD_DIR}
 
 mkdir -p ${BIN_DIR}
 mkdir -p ${RELEASE_DIR}
+mkdir -p ${WORK_DIR}
+
+cp LICENSE ${WORK_DIR}
+cp README.md ${WORK_DIR}
 
 function build_unixlike () {
     # $1 OS $2 ARCH
@@ -23,8 +28,17 @@ function build_unixlike () {
 
     FINAL_PATH=${RELEASE_DIR}/${BIN_BASENAME}_${VERSION}_$1_$2.tar.gz
     GOOS=$1 GOARCH=$2 go build -o ${BIN_DIR}/${BIN_BASENAME} ${ENTRYPOINT}
+
+    # copy bin to work
+    cp ${BIN_DIR}/${BIN_BASENAME} ${WORK_DIR}/
+
+    # copyback bin
     cp ${BIN_DIR}/${BIN_BASENAME} ${BIN_DIR}/${BIN_BASENAME}_$1_$2
-    tar -C ${BIN_DIR}/ -cvzf ${FINAL_PATH} ${BIN_BASENAME}
+
+    ORG_DIR=`pwd`
+    cd ${WORK_DIR}
+    tar -cvzf ${FINAL_PATH} --exclude *.tar.gz ./*
+    cd ${ORG_DIR}
     
     echo "done => ${FINAL_PATH}"
 }
