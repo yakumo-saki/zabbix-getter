@@ -27,7 +27,7 @@ function build_unixlike () {
     echo Building $1 $2 binary
 
     FINAL_PATH=${RELEASE_DIR}/${BIN_BASENAME}_${VERSION}_$1_$2.tar.gz
-    GOOS=$1 GOARCH=$2 go build -o ${BIN_DIR}/${BIN_BASENAME} ${ENTRYPOINT}
+    GOOS=$1 GOARCH=$2 CGO_ENABLED=0 go build -o ${BIN_DIR}/${BIN_BASENAME} ${ENTRYPOINT}
 
     # copy bin to work
     cp ${BIN_DIR}/${BIN_BASENAME} ${WORK_DIR}/
