@@ -51,7 +51,7 @@ import (
 
 type hostApiResult struct {
 	Jsonrpc string
-	Result  []hostResult
+	Result  []hostResult `json:",omitempty"`
 	Error   string
 	Id      int
 }
@@ -61,7 +61,7 @@ type hostResult struct {
 	Host   string
 }
 
-// Authenticate to zabbix and get authenticate token
+// Get hostid
 func GetHostId(url string, token string, hostname string) (string, error) {
 	jsonTemplate := `
 	{
@@ -73,7 +73,7 @@ func GetHostId(url string, token string, hostname string) (string, error) {
 				"host"
 			]
 			,"filter": {
-				"name": "%s"
+				"host": "%s"
 			}
 		},
 		"id": 2,
@@ -92,20 +92,28 @@ func GetHostId(url string, token string, hostname string) (string, error) {
 	}
 
 	// expected result
-	// {"jsonrpc":"2.0","result":"057466f9a6cb65b3d57d9460cc792b9b","id":1}
+	// {"jsonrpc":"2.0","result":[{"hostid":"10307","host":"envboy_livingroom"}],"id":2}
 	byteArray, _ := ioutil.ReadAll(resp.Body)
-	resp.Body.Close()
 	logger.T("Response\n", string(byteArray)) // htmlをstringで取得
+
+	resp.Body.Close()
 
 	// parse JSON
 	var decode_data hostApiResult
 	if err := json.Unmarshal(byteArray, &decode_data); err != nil {
+		logger.D(err)
+		logger.E(string(byteArray))
 		return "", &ZabbixError{Msg: "Error while parsing json.\n" + string(byteArray), Err: err}
 	}
 
-	// TODO error when multiple host returned
+	// TODO error when multiple or no host returned
+	if len(decode_data.Result) != 1 {
+		return "", &ZabbixError{
+			Msg: "No hosts or multiple hosts found " + string(len(decode_data.Result)),
+		}
+	}
 
 	// 表示
-	fmt.Println(decode_data.Result[0].Hostid)
+	logger.D(fmt.Sprintf("HostId is %s", decode_data.Result[0].Hostid))
 	return decode_data.Result[0].Hostid, nil
 }

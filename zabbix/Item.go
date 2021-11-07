@@ -83,7 +83,7 @@ import (
 
 type GetItemApiResult struct {
 	Jsonrpc string
-	Result  []ItemResult
+	Result  []ItemResult `json:",omitempty"`
 	Error   string
 	Id      int
 }
@@ -99,7 +99,7 @@ type ItemResult struct {
 }
 
 // Authenticate to zabbix and get authenticate token
-func GetItem(url string, token string, hostname string, itemname string) (ItemResult, error) {
+func GetItem(url string, token string, hostId string, itemname string) (ItemResult, error) {
 	jsonTemplate := `
 	{
 		"jsonrpc": "2.0",
@@ -114,15 +114,15 @@ func GetItem(url string, token string, hostname string, itemname string) (ItemRe
 				"lastclock",
 				"units"
 			],
-			"filter": {
-				"key_": "%s",
-				"host": "%s"
-			}
+			"search": {
+				"key_": "%s"
+			},
+			"hostids": ["%s"]
 		},
 		"id": 3,
 		"auth": "%s"
 	}`
-	jsonStr := fmt.Sprintf(jsonTemplate, itemname, hostname, token)
+	jsonStr := fmt.Sprintf(jsonTemplate, itemname, hostId, token)
 
 	logger.T("Request\n", jsonStr)
 
@@ -145,6 +145,7 @@ func GetItem(url string, token string, hostname string, itemname string) (ItemRe
 	var decode_data GetItemApiResult
 	if err := json.Unmarshal(byteArray, &decode_data); err != nil {
 		logger.D(err)
+		logger.E(string(byteArray))
 		return ItemResult{}, &ZabbixError{Msg: "Error while parsing json.\n" + string(byteArray), Err: err}
 	}
 
