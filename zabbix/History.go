@@ -94,7 +94,7 @@ func GetHistory(url string, token string, itemId string) (HistoryResult, error) 
 	// 表示
 	if len(decode_data.Result) < 1 {
 		return HistoryResult{}, &ZabbixError{
-			Msg: "No history found " + string(len(decode_data.Result)),
+			Msg: "No historys found",
 		}
 	}
 

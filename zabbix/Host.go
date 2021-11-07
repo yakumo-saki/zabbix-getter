@@ -109,7 +109,7 @@ func GetHostId(url string, token string, hostname string) (string, error) {
 	// TODO error when multiple or no host returned
 	if len(decode_data.Result) != 1 {
 		return "", &ZabbixError{
-			Msg: "No hosts or multiple hosts found " + string(len(decode_data.Result)),
+			Msg: fmt.Sprintf("No hosts or multiple hosts found: %d", len(decode_data.Result)),
 		}
 	}
 
