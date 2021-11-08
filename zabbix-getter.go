@@ -4,21 +4,25 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
+	"time"
 
-	"github.com/yakumo-saki/zabbix-getter/YLogger"
+	"github.com/imdario/mergo"
 	"github.com/yakumo-saki/zabbix-getter/config"
+	"github.com/yakumo-saki/zabbix-getter/ylog"
 	"github.com/yakumo-saki/zabbix-getter/zabbix"
 )
 
-var logger = YLogger.GetLogger("main")
+var logger = ylog.GetLogger()
 var Flags config.ConfigStruct // dotenv + flags
 
 func main() {
 
-	logger = YLogger.GetLogger("main")
-	YLogger.SetLogLevel("WARN")
-	YLogger.SetLogOutput("STDERR")
+	ylog.Init()
+	logger = ylog.GetLogger()
+	ylog.SetLogLevel("WARN")
+	ylog.SetLogOutput("STDERR")
 
 	cfg := config.LoadConfig()
 	cfgerr := config.CheckConfig(cfg)
@@ -28,7 +32,7 @@ func main() {
 		return
 	}
 
-	YLogger.SetLogLevel(cfg.Loglevel)
+	ylog.SetLogLevel(cfg.Loglevel)
 
 	token, autherr := zabbix.Authenticate(cfg.Url, cfg.Username, cfg.Password)
 	if autherr != nil {
@@ -72,7 +76,17 @@ func main() {
 	if strings.ToUpper(cfg.Output) == "VALUE" {
 		fmt.Println(string(item.Lastvalue))
 	} else {
-		json, err := json.Marshal(item)
+		unixtime, e := strconv.ParseInt(item.Lastclock, 0, 0)
+		timeStr := ""
+		if e == nil {
+			timeStr = fmt.Sprint(time.Unix(unixtime, 0))
+		}
+
+		r := make(map[string]interface{})
+		mergo.Map(&r, item, mergo.WithOverride)
+		r["lastclockString"] = timeStr
+
+		json, err := json.Marshal(r)
 		if err != nil {
 			logger.F(err)
 			panic(err)

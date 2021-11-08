@@ -1,5 +1,5 @@
 package config
 
-import "github.com/yakumo-saki/zabbix-getter/YLogger"
+import "github.com/yakumo-saki/zabbix-getter/ylog"
 
-var logger = YLogger.GetLogger("config")
+var logger = ylog.GetLoggerByName("config")

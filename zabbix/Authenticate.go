@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/yakumo-saki/zabbix-getter/YLogger"
+	"github.com/yakumo-saki/zabbix-getter/ylog"
 )
 
 type authenticateResult struct {
@@ -16,7 +16,7 @@ type authenticateResult struct {
 	Id      int
 }
 
-var logger = YLogger.GetLogger("zabbix")
+var logger = ylog.GetLoggerByName("zabbix")
 
 // Authenticate to zabbix and get authenticate token
 func Authenticate(url string, username string, password string) (string, error) {

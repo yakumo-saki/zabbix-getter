@@ -70,7 +70,7 @@ func loadDotEnv(path string) (*ConfigStruct, error) {
 
 	m, err := godotenv.Read(path)
 	if err != nil {
-		logger.D("Error loading .env file:" + path)
+		logger.D("Error loading .env file" + path)
 		return &conf, err
 	}
 
