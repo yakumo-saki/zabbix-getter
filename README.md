@@ -77,6 +77,6 @@ $ zabbix-getter -s test -k testitem
 | -e , --endpoint | ENDPOINT  | ""       | zabbix APIエンドポイント           | http://192.168.1.100/api_jsonrpc.php |
 | -s , --hostname | (なし)     | ""       | zabbixに登録されたホスト名（キーの方） | testhost |
 | -k , --key      | (なし)     | ""       | ホストアイテムのキー                 | system.hostname |
-| -l , --loglevel | LOGLEVEL  | WARN     | ログ出力レベル TRACE<DEBUG<INFO<WARN<ERROR<FATAL | (CLI) -loglevel TRACE |
+| -l , --loglevel | LOGLEVEL  | WARN     | ログ出力レベル TRACE>DEBUG>INFO>WARN>ERROR>FATAL | (CLI) -loglevel TRACE |
 | -o , --output   | OUTPUT   | VALUE     | 出力を [JSON | VALUE] にする。VALUEは値のみ出力 | (CLI) -output JSON |
 
