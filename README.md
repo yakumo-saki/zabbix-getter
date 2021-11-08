@@ -52,6 +52,9 @@ $ zabbix-getter -s test -k testitem
 }
 ```
 
+$ zabbix-getter -s test -k testitem -o VALUE
+1234
+
 ## 修了コード
 
 * 0 正常
