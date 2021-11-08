@@ -16,10 +16,10 @@ type authenticateResult struct {
 	Id      int
 }
 
-var logger = ylog.GetLoggerByName("zabbix")
-
 // Authenticate to zabbix and get authenticate token
 func Authenticate(url string, username string, password string) (string, error) {
+	var logger = ylog.GetLogger()
+
 	jsonTemplate := `
 	{"jsonrpc":"2.0","method":"user.login","params":
 	{"user":"%s","password":"%s"},

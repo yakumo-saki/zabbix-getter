@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/yakumo-saki/zabbix-getter/ylog"
 )
 
 // request
@@ -100,6 +102,8 @@ type ItemResult struct {
 
 // Authenticate to zabbix and get authenticate token
 func GetItem(url string, token string, hostId string, itemname string) (ItemResult, error) {
+	var logger = ylog.GetLogger()
+
 	jsonTemplate := `
 	{
 		"jsonrpc": "2.0",

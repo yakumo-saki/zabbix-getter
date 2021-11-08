@@ -1,9 +1,11 @@
 package config
 
-// var logger = YLogger.GetLogger("zabbix")
+import "github.com/yakumo-saki/zabbix-getter/ylog"
 
 // 設定をロードします
 func LoadConfig() *ConfigStruct {
+	var logger = ylog.GetLogger()
+
 	// var conf ConfigStruct
 	cli := GetConfigFromCommandLine()
 	dotConfig, _ := LoadFromDotConfig()
@@ -37,6 +39,8 @@ func mergeConfigs(base *ConfigStruct, overwrite *ConfigStruct) *ConfigStruct {
 }
 
 func getOneValue(base string, overwrite string) string {
+	var logger = ylog.GetLogger()
+
 	switch {
 	case base == "" && overwrite == "":
 		return ""

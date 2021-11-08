@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/yakumo-saki/zabbix-getter/ylog"
 )
 
 //
@@ -63,6 +65,8 @@ type hostResult struct {
 
 // Get hostid
 func GetHostId(url string, token string, hostname string) (string, error) {
+	var logger = ylog.GetLogger()
+
 	jsonTemplate := `
 	{
 		"jsonrpc": "2.0",

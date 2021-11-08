@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/joho/godotenv"
+	"github.com/yakumo-saki/zabbix-getter/ylog"
 )
 
 const CONFFILE = "zabbix-getter.conf"
@@ -12,6 +13,7 @@ const CONFFILE = "zabbix-getter.conf"
 // ~/.config/zabbix-getter.conf
 //
 func LoadFromDotConfig() (*ConfigStruct, error) {
+	var logger = ylog.GetLogger()
 
 	confdir, configerr := os.UserConfigDir()
 	if configerr != nil {
@@ -65,6 +67,7 @@ func getExecuteDir() string {
 // dotenvファイルをロードする
 // 存在しなくてもスルー
 func loadDotEnv(path string) (*ConfigStruct, error) {
+	var logger = ylog.GetLogger()
 
 	var conf ConfigStruct
 
