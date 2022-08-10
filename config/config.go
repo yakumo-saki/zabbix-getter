@@ -8,8 +8,8 @@ func LoadConfig() *ConfigStruct {
 
 	// var conf ConfigStruct
 	cli := GetConfigFromCommandLine()
-	dotConfig, _ := LoadFromDotConfig()
-	execConfig, _ := LoadFromExecDir()
+	dotConfig, _ := LoadFromDotConfig() // Linux/macOS
+	execConfig, _ := LoadFromExecDir()  // windows対策
 	envConfig := LoadFromEnvValue()
 
 	config := mergeConfigs(execConfig, dotConfig)
@@ -17,7 +17,6 @@ func LoadConfig() *ConfigStruct {
 	config = mergeConfigs(config, cli)
 
 	SetDefaultConfig(config)
-	CheckConfig(config)
 
 	logger.T("Config = ", config)
 

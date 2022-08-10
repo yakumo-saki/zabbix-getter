@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/pflag"
 	"github.com/yakumo-saki/zabbix-getter/global"
@@ -11,7 +12,7 @@ import (
 
 func showVersionMessage() {
 	o := os.Stderr
-	fmt.Fprintf(o, "%s (%s)\n", os.Args[0], global.Url)
+	fmt.Fprintf(o, "%s (%s)\n", filepath.Base(os.Args[0]), global.Url)
 	fmt.Fprintf(o, "Version: %s\n", global.Version)
 }
 
@@ -20,8 +21,14 @@ func setHelpMessage() {
 		o := os.Stderr
 		showVersionMessage()
 		fmt.Fprintf(o, "\n")
+		fmt.Fprintf(o, "Username and Password must be declared: \n")
+		fmt.Fprintf(o, "* ~/.config/zabbix-getter.conf\n")
+		fmt.Fprintf(o, "* "+filepath.Join(getExecuteDir(), CONFFILE)+"\n")
+		fmt.Fprintf(o, "* environment value USERNAME and PASSWORD\n")
+		fmt.Fprintf(o, "\n")
 		fmt.Fprintf(o, "Usage:\n")
 		pflag.PrintDefaults()
+		fmt.Fprintf(o, "\n")
 		fmt.Fprintf(o, "\n")
 	}
 }
@@ -30,8 +37,8 @@ func GetConfigFromCommandLine() *ConfigStruct {
 	var cliOption ConfigStruct
 
 	url := pflag.StringP("endpoint", "e", "", "Zabbix Server API endpoint url. example: http://192.168.0.20/api_jsonrpc.php")
-	zbxServer := pflag.StringP("zabbix", "z", "", "Zabbix Server hostname or IP address. overwrites endpoint url using http. if you want to use https, use -Z. example: 192.168.0.20")
-	zbxHttpsServer := pflag.StringP("zabbix-https", "Z", "", "Zabbix Server hostname or IP address. overwrites endpoint url using https. example: 192.168.0.20")
+	zbxServer := pflag.StringP("zabbix", "z", "", "Zabbix Server hostname or IP address. using http. example: 192.168.0.20")
+	zbxHttpsServer := pflag.StringP("zabbix-https", "Z", "", "Zabbix Server hostname or IP address. using https. example: 192.168.0.20")
 	host := pflag.StringP("hostname", "s", "", "Zabbix Hostname")
 	key := pflag.StringP("key", "k", "", "Zabbix Item Key")
 	loglevel := pflag.StringP("loglevel", "l", "", "Loglevel TRACE>DEBUG>INFO>WARN>ERROR>FATAL")
@@ -47,7 +54,7 @@ func GetConfigFromCommandLine() *ConfigStruct {
 		os.Exit(0)
 	}
 
-	if *help || len(os.Args) == 0 {
+	if *help || len(os.Args) == 1 {
 		pflag.Usage()
 		os.Exit(0)
 	}
@@ -60,11 +67,11 @@ func GetConfigFromCommandLine() *ConfigStruct {
 	cliOption.Output = *output
 
 	switch {
-	case zbxServer != nil && zbxHttpsServer != nil:
+	case *zbxServer != "" && *zbxHttpsServer != "":
 		panic("can not use both -z and -zs.")
-	case zbxServer != nil:
+	case *zbxServer != "":
 		cliOption.Url = fmt.Sprintf("http://%s/api_jsonrpc.php", *zbxServer)
-	case zbxHttpsServer != nil:
+	case *zbxHttpsServer != "":
 		cliOption.Url = fmt.Sprintf("https://%s/api_jsonrpc.php", *zbxHttpsServer)
 	}
 

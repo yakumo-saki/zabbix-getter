@@ -27,7 +27,7 @@ func main() {
 	cfg := config.LoadConfig()
 	cfgerr := config.CheckConfig(cfg)
 	if cfgerr != nil {
-		logger.F(cfgerr)
+		fmt.Fprint(os.Stderr, cfgerr.Error()+". see help for detail.\n")
 		os.Exit(10)
 		return
 	}
