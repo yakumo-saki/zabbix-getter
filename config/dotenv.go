@@ -11,7 +11,6 @@ import (
 const CONFFILE = "zabbix-getter.conf"
 
 // ~/.config/zabbix-getter.conf
-//
 func LoadFromDotConfig() (*ConfigStruct, error) {
 	var logger = ylog.GetLogger()
 
@@ -29,7 +28,6 @@ func LoadFromDotConfig() (*ConfigStruct, error) {
 }
 
 // 実行時ファイルのディレクトリのある zabbix-getter.conf
-//
 func LoadFromExecDir() (*ConfigStruct, error) {
 	dotenv := filepath.Join(getExecuteDir(), CONFFILE)
 	cfg, _ := loadDotEnv(dotenv)
@@ -38,7 +36,6 @@ func LoadFromExecDir() (*ConfigStruct, error) {
 }
 
 // 実行時の環境変数からconfigを生成
-//
 func LoadFromEnvValue() *ConfigStruct {
 
 	var conf ConfigStruct
@@ -77,9 +74,11 @@ func loadDotEnv(path string) (*ConfigStruct, error) {
 		return &conf, err
 	}
 
+	//
 	conf.Hostname = m["HOSTNAME"]
-	conf.Url = m["ENDPOINT"]
 	conf.Key = m["KEY"]
+
+	conf.Url = m["ENDPOINT"]
 	conf.Output = m["OUTPUT"]
 	conf.Loglevel = m["LOGLEVEL"]
 	conf.Password = m["PASSWORD"]

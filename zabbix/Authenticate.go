@@ -13,7 +13,14 @@ import (
 type authenticateResult struct {
 	Jsonrpc string
 	Result  string
+	Error   zabbixError
 	Id      int
+}
+
+type zabbixError struct {
+	Code    int
+	Message string
+	Data    string
 }
 
 // Authenticate to zabbix and get authenticate token
@@ -45,6 +52,11 @@ func Authenticate(url string, username string, password string) (string, error) 
 	var decode_data authenticateResult
 	if err := json.Unmarshal(byteArray, &decode_data); err != nil {
 		return "", err
+	}
+
+	// check authorize success
+	if decode_data.Error.Code != 0 {
+		return "", fmt.Errorf("login failed: error %d %s", decode_data.Error.Code, decode_data.Error.Data)
 	}
 
 	// 表示

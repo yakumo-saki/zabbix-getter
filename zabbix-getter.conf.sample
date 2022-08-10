@@ -2,3 +2,7 @@ USERNAME=Admin
 PASSWORD=zabbix
 ENDPOINT=http://192.168.1.123/api_jsonrpc.php
 LOGLEVEL=WARN
+
+# these are useful in debug mode (--debug)
+HOSTNAME=somezabbixhost
+KEY=somekey

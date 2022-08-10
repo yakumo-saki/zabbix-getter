@@ -19,13 +19,13 @@
             "program": "${workspaceFolder}/zabbix-getter.go",
             "args": ["--help"]
         },
-        {
-            "name": "with dummy params",
+        { 
+            "name": "--debug: no cli param",
             "type": "go",
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}/zabbix-getter.go",
-            "args": ["-z", "192.168.0.20"]
+            "args": ["--debug"]
         }
     ]
 }

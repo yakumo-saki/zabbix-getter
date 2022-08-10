@@ -22,7 +22,7 @@ func CheckConfig(c *ConfigStruct) error {
 	}
 
 	if c.Url == "" {
-		return errors.New("please specify zabbix API endpoint")
+		return errors.New("please specify zabbix API endpoint or zabbix server")
 	}
 	if c.Hostname == "" {
 		return errors.New("please specify zabbix hostname")

@@ -32,7 +32,10 @@ func main() {
 		return
 	}
 
-	ylog.SetLogLevel(cfg.Loglevel)
+	err := ylog.SetLogLevel(cfg.Loglevel)
+	if err != nil {
+		ylog.SetLogLevel("WARN")
+	}
 
 	token, autherr := zabbix.Authenticate(cfg.Url, cfg.Username, cfg.Password)
 	if autherr != nil {

@@ -1,6 +1,7 @@
 package ylog
 
 import (
+	"fmt"
 	"path"
 	"runtime"
 	"strings"
@@ -72,7 +73,7 @@ func SetLogOutput(output string) {
 
 // ログ出力しきい値を設定します。
 // level = [TRACE | DEBUG | INFO | WARN | ERROR | FATAL]
-func SetLogLevel(level string) {
+func SetLogLevel(level string) error {
 	switch strings.ToUpper(level) {
 	case LOG_LEVEL_TRACE:
 		logging.logLevel = 0
@@ -87,8 +88,9 @@ func SetLogLevel(level string) {
 	case LOG_LEVEL_FATAL:
 		logging.logLevel = 5
 	default:
-		panic("SetLogLevel: BAD loglevel " + level)
+		return fmt.Errorf("SetLogLevel: BAD loglevel %s", level)
 	}
+	return nil
 }
 
 // ログ出力形式を設定します。

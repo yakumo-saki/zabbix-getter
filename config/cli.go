@@ -45,6 +45,7 @@ func GetConfigFromCommandLine() *ConfigStruct {
 	output := pflag.StringP("output", "o", "", "Output type [JSON | VALUE]")
 	version := pflag.BoolP("version", "v", false, "Show version")
 	help := pflag.Bool("help", false, "Show this help")
+	debug := pflag.Bool("debug", false, "debug mode. this has no function.")
 
 	setHelpMessage()
 	pflag.Parse()
@@ -77,6 +78,10 @@ func GetConfigFromCommandLine() *ConfigStruct {
 
 	if cliOption.Loglevel != "" {
 		ylog.SetLogLevel(cliOption.Loglevel)
+	}
+
+	if *debug {
+		ylog.GetLogger().D("debug mode running.")
 	}
 
 	return &cliOption
