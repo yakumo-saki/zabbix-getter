@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/yakumo-saki/zabbix-getter/ylog"
@@ -83,7 +83,7 @@ func GetHistory(url string, token string, itemId string) (HistoryResult, error) 
 		}
 	}
 
-	byteArray, _ := ioutil.ReadAll(resp.Body)
+	byteArray, _ := io.ReadAll(resp.Body)
 	resp.Body.Close()
 	logger.T("Response\n", string(byteArray)) // htmlをstringで取得
 

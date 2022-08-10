@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/yakumo-saki/zabbix-getter/ylog"
@@ -44,7 +44,7 @@ func Authenticate(url string, username string, password string) (string, error) 
 
 	// expected result
 	// {"jsonrpc":"2.0","result":"057466f9a6cb65b3d57d9460cc792b9b","id":1}
-	byteArray, _ := ioutil.ReadAll(resp.Body)
+	byteArray, _ := io.ReadAll(resp.Body)
 	resp.Body.Close()
 	logger.T(string(byteArray)) // htmlをstringで取得
 

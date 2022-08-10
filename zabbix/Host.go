@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/yakumo-saki/zabbix-getter/ylog"
@@ -97,7 +97,7 @@ func GetHostId(url string, token string, hostname string) (string, error) {
 
 	// expected result
 	// {"jsonrpc":"2.0","result":[{"hostid":"10307","host":"envboy_livingroom"}],"id":2}
-	byteArray, _ := ioutil.ReadAll(resp.Body)
+	byteArray, _ := io.ReadAll(resp.Body)
 	logger.T("Response\n", string(byteArray)) // htmlをstringで取得
 
 	resp.Body.Close()
