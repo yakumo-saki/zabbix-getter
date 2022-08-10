@@ -23,6 +23,8 @@ Arch Linux： AURからインストール可能です。 `yay -S zabbix-getter`
 About UserConfigDir
 https://github.com/golang/go/issues/29960
 
+### configration file example
+
 ```
 USERNAME=Admin
 PASSWORD=zabbix
@@ -35,11 +37,13 @@ LOGLEVEL=WARN
 
 ## 実行例
 
-$ zabbix-getter -s test -k testitem
+実行結果と致命的なメッセージのみ標準出力(stdout)に出力されます。
+それ以外は標準エラー出力(stderr)に出力されます。
+
+`$ zabbix-getter -s test -k testitem`
 1234
 
-$ zabbix-getter -s test -k testitem
-
+`$ zabbix-getter -s test -k testitem`
 ```
 {
   "itemId": "47991",
@@ -52,7 +56,7 @@ $ zabbix-getter -s test -k testitem
 }
 ```
 
-$ zabbix-getter -s test -k testitem -o VALUE
+`$ zabbix-getter -s test -k testitem -o VALUE`
 1234
 
 ## 修了コード
@@ -82,4 +86,11 @@ $ zabbix-getter -s test -k testitem -o VALUE
 | -k , --key      | (なし)     | ""       | ホストアイテムのキー                 | system.hostname |
 | -l , --loglevel | LOGLEVEL  | WARN     | ログ出力レベル TRACE>DEBUG>INFO>WARN>ERROR>FATAL | (CLI) -loglevel TRACE |
 | -o , --output   | OUTPUT   | VALUE     | 出力を [JSON | VALUE] にする。VALUEは値のみ出力 | (CLI) -output JSON |
+| -z , -Z   | （なし）   | -     | -e http(s)://<値>/api_jsonrpc.php のショートハンド | (CLI) -z 10.20.30.40 |
+| --debug   | （なし）   | -     | デバッグ用。値の指定チェックを行わない |  |
 
+### --debug について
+
+* 通常は `-s` `-k` による指定が必須ですが、このチェックを行わないようになります。
+* 要するに、zabbix-getter.conf に書いてある HOSTNAME と KEY が使用されます。
+* 自分の環境の HOSTNAMEやKEYをコード上(launch.json)に露出させたくないために作成された機能です。
