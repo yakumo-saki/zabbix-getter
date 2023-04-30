@@ -95,8 +95,8 @@ type ItemResult struct {
 	Hostid    string `json:"hostId"`
 	Key_      string `json:"key_"`
 	Name      string `json:"name"`
-	Lastvalue string `json:"value"`
-	Lastclock string `json:"lastClock"`
+	Lastvalue string `json:"lastvalue"`
+	Lastclock string `json:"lastclock"`
 	Units     string `json:"units"`
 }
 
@@ -154,7 +154,7 @@ func GetItem(url string, token string, hostId string, itemname string) (ItemResu
 	}
 
 	// 表示
-	// logger.T(decode_data.Result)
+	logger.T(decode_data.Result)
 
 	// check return item key is actualy match. (api is like search)
 	var ret ItemResult

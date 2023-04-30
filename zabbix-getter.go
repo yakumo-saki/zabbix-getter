@@ -63,15 +63,23 @@ func main() {
 	}
 	logger.D("Itemname is OK. ID=" + item.Itemid)
 
-	// Overwrite item.lastvalue because zabbix sometime return lastValue = ""
-	latestValue, latestClock, histerr := zabbix.GetLatestHistoryValue(cfg.Url, token, item.Itemid)
-	if histerr != nil {
-		logger.F(histerr)
-		logger.F("Error occured at GetHistory")
-		os.Exit(14)
-		return
+	latestValue, latestClock := item.Lastvalue, item.Lastclock
+
+	if latestValue == "" {
+		// Overwrite item.lastvalue because zabbix sometime return lastValue = ""
+		logger.D("Item latestValue is empty. getting history.")
+
+		val, clk, histerr := zabbix.GetLatestHistoryValue(cfg.Url, token, item.Itemid)
+		if histerr != nil {
+			logger.F(histerr)
+			logger.F("Error occured at GetHistory")
+			os.Exit(14)
+			return
+		}
+
+		latestValue = val
+		latestClock = clk
 	}
-	logger.D(latestValue)
 
 	item.Lastvalue = latestValue
 	item.Lastclock = latestClock

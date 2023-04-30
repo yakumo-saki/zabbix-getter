@@ -52,8 +52,7 @@ type HistoryResult struct {
 func GetHistory(url string, token string, itemId string) (HistoryResult, error) {
 	var logger = ylog.GetLogger()
 
-	jsonTemplate := `
-	{
+	jsonTemplate := `{
 		"jsonrpc": "2.0",
 		"method": "history.get",
 		"params": {
@@ -62,7 +61,7 @@ func GetHistory(url string, token string, itemId string) (HistoryResult, error) 
 			"itemids": "%s",
 			"sortfield": "clock",
 			"sortorder": "DESC",
-			"limit": 10
+			"limit": 1
 		},
 		"auth": "%s",
 		"id": 3
