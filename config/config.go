@@ -15,12 +15,13 @@ func LoadConfig() *ConfigStruct {
 
 	cli := GetConfigFromCommandLine()
 
+	dotConfig, _ := LoadFromDotConfig() // Linux: .config macOS:~/Library/Application Support
+	config = dotConfig
+
 	if strings.ToUpper(runtime.GOOS) == "DARWIN" {
 		dotConfig, _ := LoadFromXDGConfigHomeDir()
-		config = dotConfig
+		mergeConfigs(config, dotConfig)
 	}
-
-	dotConfig, _ := LoadFromDotConfig() // Linux: .config macOS:~/Library/Application Support
 
 	execConfig, _ := LoadFromExecDir() // windows対策
 	envConfig := LoadFromEnvValue()
