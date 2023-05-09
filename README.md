@@ -15,7 +15,7 @@ Arch Linux： AURからインストール可能です。 `yay -S zabbix-getter`
 複数の場所に設定ファイルを作成した場合、ルールに従って上書きされますが、
 あまり意味がないのでオススメはしません。
 
-* ~/.config/zabbix-getter.conf (Linux)
+* ~/.config/zabbix-getter.conf (Linux/macOS)
 * %APPDATA%\zabbix-getter.conf (Windows)
 * $HOME/Library/Preferences/zabbix-getter.conf (macOS)
 * 実行ファイルと同ディレクトリのzabbix-getter.conf
@@ -39,9 +39,6 @@ LOGLEVEL=WARN
 
 実行結果と致命的なメッセージのみ標準出力(stdout)に出力されます。
 それ以外は標準エラー出力(stderr)に出力されます。
-
-`$ zabbix-getter -s test -k testitem`
-1234
 
 `$ zabbix-getter -s test -k testitem`
 ```
