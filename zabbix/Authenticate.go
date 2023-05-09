@@ -17,6 +17,12 @@ type authenticateResult struct {
 	Id      int
 }
 
+type logoutResult struct {
+	Jsonrpc string
+	Result  bool
+	Id      int
+}
+
 type zabbixError struct {
 	Code    int
 	Message string
@@ -111,4 +117,38 @@ func AuthenticateBefore54(url string, username string, password string) (string,
 	// 表示
 	// logger.D(decode_data.Result)
 	return decode_data.Result, 0, nil
+}
+
+func Logout(url string, auth string) error {
+	var logger = ylog.GetLogger()
+	jsonTemplate := `{"jsonrpc": "2.0","method": "user.logout","params": [],"id": 9999,"auth":"%s"}`
+
+	jsonStr := fmt.Sprintf(jsonTemplate, auth)
+	logger.T("Sending", jsonStr)
+
+	req, _ := http.NewRequest("POST", url, bytes.NewBuffer([]byte(jsonStr)))
+	req.Header.Set("Content-Type", "application/json")
+
+	client := new(http.Client)
+	resp, err := client.Do(req)
+	if err != nil {
+		return &ZabbixError{Msg: "Error while API request. (user.logout)", Err: err}
+	}
+
+	// expected result
+	// {"jsonrpc": "2.0", "result": true, "id": 9999 }
+	byteArray, _ := io.ReadAll(resp.Body)
+	resp.Body.Close()
+	logger.T("Response", string(byteArray))
+
+	// parse JSON
+	var decode_data logoutResult
+	if err := json.Unmarshal(byteArray, &decode_data); err != nil {
+		return err
+	}
+
+	if !decode_data.Result {
+		return fmt.Errorf("zabbix response is false at (user.logout)")
+	}
+	return nil
 }

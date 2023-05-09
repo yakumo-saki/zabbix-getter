@@ -65,9 +65,9 @@ func main() {
 
 	latestValue, latestClock := item.Lastvalue, item.Lastclock
 
-	if latestValue == "" {
+	if latestClock == "0" {
 		// Overwrite item.lastvalue because zabbix sometime return lastValue = ""
-		logger.D("Item latestValue is empty. getting history.")
+		logger.D("Lastclock on item is 0.(maybe last data is little old) Try getting history.")
 
 		val, clk, histerr := zabbix.GetLatestHistoryValue(cfg.Url, token, item.Itemid)
 		if histerr != nil {
@@ -77,6 +77,7 @@ func main() {
 			return
 		}
 
+		logger.D("Getting history success.")
 		latestValue = val
 		latestClock = clk
 	}
@@ -84,6 +85,10 @@ func main() {
 	item.Lastvalue = latestValue
 	item.Lastclock = latestClock
 
+	// TODO result check
+	zabbix.Logout(cfg.Url, token)
+
+	// 出力
 	if strings.ToUpper(cfg.Output) == "VALUE" {
 		fmt.Println(string(item.Lastvalue))
 	} else {
@@ -104,4 +109,5 @@ func main() {
 		}
 		fmt.Println(string(json))
 	}
+
 }

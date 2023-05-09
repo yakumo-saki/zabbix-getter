@@ -1,18 +1,32 @@
 package config
 
-import "github.com/yakumo-saki/zabbix-getter/ylog"
+import (
+	"runtime"
+	"strings"
+
+	"github.com/yakumo-saki/zabbix-getter/ylog"
+)
 
 // 設定をロードします
 func LoadConfig() *ConfigStruct {
 	var logger = ylog.GetLogger()
 
-	// var conf ConfigStruct
+	var config *ConfigStruct
+
 	cli := GetConfigFromCommandLine()
-	dotConfig, _ := LoadFromDotConfig() // Linux/macOS
-	execConfig, _ := LoadFromExecDir()  // windows対策
+
+	if strings.ToUpper(runtime.GOOS) == "DARWIN" {
+		dotConfig, _ := LoadFromXDGConfigHomeDir()
+		config = dotConfig
+	}
+
+	dotConfig, _ := LoadFromDotConfig() // Linux: .config macOS:~/Library/Application Support
+
+	execConfig, _ := LoadFromExecDir() // windows対策
 	envConfig := LoadFromEnvValue()
 
-	config := mergeConfigs(execConfig, dotConfig)
+	config = mergeConfigs(config, dotConfig)
+	config = mergeConfigs(config, execConfig)
 	config = mergeConfigs(config, envConfig)
 	config = mergeConfigs(config, cli)
 
@@ -23,6 +37,8 @@ func LoadConfig() *ConfigStruct {
 	return config
 }
 
+// baseの設定をoverwriteの設定で上書きする。
+// ただし、overwrite側の設定が空文字列ではない場合のみ上書きする。
 func mergeConfigs(base *ConfigStruct, overwrite *ConfigStruct) *ConfigStruct {
 
 	var conf ConfigStruct
@@ -37,6 +53,8 @@ func mergeConfigs(base *ConfigStruct, overwrite *ConfigStruct) *ConfigStruct {
 	return &conf
 }
 
+// 空文字列ではない値を取得する。
+// base, overwrite双方とも空文字列ではない場合は overwrite を返す
 func getOneValue(base string, overwrite string) string {
 	var logger = ylog.GetLogger()
 

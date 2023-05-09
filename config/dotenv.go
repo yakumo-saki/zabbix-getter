@@ -10,7 +10,9 @@ import (
 
 const CONFFILE = "zabbix-getter.conf"
 
-// ~/.config/zabbix-getter.conf
+// ユーザーのconfigディレクトリ
+// Linux ~/.config/zabbix-getter.conf
+// macOS ~/Library/Application Support/zabbix-getter.conf
 func LoadFromDotConfig() (*ConfigStruct, error) {
 	var logger = ylog.GetLogger()
 
@@ -30,6 +32,30 @@ func LoadFromDotConfig() (*ConfigStruct, error) {
 // 実行時ファイルのディレクトリのある zabbix-getter.conf
 func LoadFromExecDir() (*ConfigStruct, error) {
 	dotenv := filepath.Join(getExecuteDir(), CONFFILE)
+	cfg, _ := loadDotEnv(dotenv)
+
+	return cfg, nil
+}
+
+// macOS対策
+// $XDG_CONFIG_HOME/zabbix-getter.conf or ~/.config/zabbix-getter.conf
+func LoadFromXDGConfigHomeDir() (*ConfigStruct, error) {
+	var logger = ylog.GetLogger()
+
+	confdir := os.Getenv("XDG_CONFIG_HOME")
+
+	if confdir == "" {
+		cfdir, configerr := os.UserHomeDir()
+		if configerr != nil {
+			var c ConfigStruct
+			logger.E(os.Stderr, configerr)
+			return &c, configerr
+		}
+
+		confdir = cfdir
+	}
+
+	dotenv := filepath.Join(confdir, CONFFILE)
 	cfg, _ := loadDotEnv(dotenv)
 
 	return cfg, nil
@@ -70,7 +96,7 @@ func loadDotEnv(path string) (*ConfigStruct, error) {
 
 	m, err := godotenv.Read(path)
 	if err != nil {
-		logger.D("Error loading .env file" + path)
+		logger.D("Error loading .env file: " + path)
 		return &conf, err
 	}
 
