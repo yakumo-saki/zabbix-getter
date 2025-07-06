@@ -1,11 +1,9 @@
 package zabbix
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
 
 	"github.com/yakumo-saki/zabbix-getter/ylog"
 )
@@ -64,7 +62,7 @@ type hostResult struct {
 }
 
 // Get hostid
-func GetHostId(url string, token string, hostname string) (string, error) {
+func (c *Client) GetHostId(hostname string) (string, error) {
 	var logger = ylog.GetLogger()
 
 	jsonTemplate := `
@@ -83,14 +81,10 @@ func GetHostId(url string, token string, hostname string) (string, error) {
 		"id": 2,
 		"auth": "%s"
 	}`
-	jsonStr := fmt.Sprintf(jsonTemplate, hostname, token)
+	jsonStr := fmt.Sprintf(jsonTemplate, hostname, c.Token)
 	logger.T("Response\n", jsonStr)
 
-	req, _ := http.NewRequest("POST", url, bytes.NewBuffer([]byte(jsonStr)))
-	req.Header.Set("Content-Type", "application/json")
-
-	client := new(http.Client)
-	resp, err := client.Do(req)
+	resp, err := c.PostApi(jsonStr)
 	if err != nil {
 		return "", &ZabbixError{Msg: "Error while API request. (host.get)", Err: err}
 	}

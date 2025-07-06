@@ -101,7 +101,7 @@ type ItemResult struct {
 }
 
 // Authenticate to zabbix and get authenticate token
-func GetItem(url string, token string, hostId string, itemname string) (ItemResult, error) {
+func (c *Client) GetItem(hostId string, itemname string) (ItemResult, error) {
 	var logger = ylog.GetLogger()
 
 	jsonTemplate := `
@@ -126,11 +126,11 @@ func GetItem(url string, token string, hostId string, itemname string) (ItemResu
 		"id": 3,
 		"auth": "%s"
 	}`
-	jsonStr := fmt.Sprintf(jsonTemplate, itemname, hostId, token)
+	jsonStr := fmt.Sprintf(jsonTemplate, itemname, hostId, c.Token)
 
 	logger.T("Request\n", jsonStr)
 
-	req, _ := http.NewRequest("POST", url, bytes.NewBuffer([]byte(jsonStr)))
+	req, _ := http.NewRequest("POST", c.Url, bytes.NewBuffer([]byte(jsonStr)))
 	req.Header.Set("Content-Type", "application/json")
 
 	client := new(http.Client)

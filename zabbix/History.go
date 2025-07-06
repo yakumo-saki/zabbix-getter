@@ -1,11 +1,9 @@
 package zabbix
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
 
 	"github.com/yakumo-saki/zabbix-getter/ylog"
 )
@@ -49,7 +47,7 @@ type HistoryResult struct {
 }
 
 // Authenticate to zabbix and get authenticate token
-func GetHistory(url string, token string, itemId string) (HistoryResult, error) {
+func (c *Client) GetHistory(url string, token string, itemId string) (HistoryResult, error) {
 	var logger = ylog.GetLogger()
 
 	jsonTemplate := `{
@@ -63,18 +61,14 @@ func GetHistory(url string, token string, itemId string) (HistoryResult, error) 
 			"sortorder": "DESC",
 			"limit": 1
 		},
-		"auth": "%s",
-		"id": 3
+		"id": 3,
+		"auth": "%s"
 	}`
 	jsonStr := fmt.Sprintf(jsonTemplate, itemId, token)
 
 	logger.T("Request\n", jsonStr)
 
-	req, _ := http.NewRequest("POST", url, bytes.NewBuffer([]byte(jsonStr)))
-	req.Header.Set("Content-Type", "application/json")
-
-	client := new(http.Client)
-	resp, err := client.Do(req)
+	resp, err := c.PostApi(jsonStr)
 	if err != nil {
 		return HistoryResult{}, &ZabbixError{
 			Msg: "Error while API request. (history.get)",
@@ -106,8 +100,8 @@ func GetHistory(url string, token string, itemId string) (HistoryResult, error) 
 
 // Get Latest value from history.
 // returns latest value, clock(unixtime), error
-func GetLatestHistoryValue(url string, token string, itemId string) (string, string, error) {
-	history, err := GetHistory(url, token, itemId)
+func (c *Client) GetLatestHistoryValue(itemId string) (string, string, error) {
+	history, err := c.GetHistory(c.Url, c.Token, itemId)
 	if err != nil {
 		return "", "", err
 	}

@@ -37,7 +37,11 @@ func main() {
 		ylog.SetLogLevel("WARN")
 	}
 
-	token, autherr := zabbix.Authenticate(cfg.Url, cfg.Username, cfg.Password)
+	zabbix := zabbix.NewClient(cfg.Url, cfg.Username, cfg.Password)
+
+	zabbix.Init()
+
+	autherr := zabbix.Authenticate()
 	if autherr != nil {
 		logger.F(autherr)
 		logger.F("Error occured at Authenticate")
@@ -45,7 +49,7 @@ func main() {
 		return
 	}
 
-	hostId, hosterr := zabbix.GetHostId(cfg.Url, token, cfg.Hostname)
+	hostId, hosterr := zabbix.GetHostId(cfg.Hostname)
 	if hosterr != nil {
 		logger.F(hosterr)
 		logger.F("Error occured at GetHostId. Hostname is wrong ?")
@@ -54,7 +58,7 @@ func main() {
 	}
 	logger.D("Hostname is OK. ID=" + hostId)
 
-	item, itemerr := zabbix.GetItem(cfg.Url, token, hostId, cfg.Key)
+	item, itemerr := zabbix.GetItem(hostId, cfg.Key)
 	if itemerr != nil {
 		logger.F(itemerr)
 		logger.F("Error occured at GetItemId")
@@ -69,7 +73,7 @@ func main() {
 		// Overwrite item.lastvalue because zabbix sometime return lastValue = ""
 		logger.D("Lastclock on item is 0.(maybe last data is little old) Try getting history.")
 
-		val, clk, histerr := zabbix.GetLatestHistoryValue(cfg.Url, token, item.Itemid)
+		val, clk, histerr := zabbix.GetLatestHistoryValue(item.Itemid)
 		if histerr != nil {
 			logger.F(histerr)
 			logger.F("Error occured at GetHistory")
@@ -86,7 +90,7 @@ func main() {
 	item.Lastclock = latestClock
 
 	// TODO result check
-	zabbix.Logout(cfg.Url, token)
+	zabbix.Logout()
 
 	// 出力
 	if strings.ToUpper(cfg.Output) == "VALUE" {
