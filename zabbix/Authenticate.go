@@ -48,13 +48,52 @@ func (c *Client) Authenticate() error {
 }
 
 // Authenticate to zabbix and get authenticate token
+func (c *Client) AuthenticateApi(url string, username string, password string) (string, int, error) {
+	var logger = ylog.GetLogger()
+
+	// zabbix <= 5.2 username is user, zabbix 5.4 or newer, username params is username
+	var jsonTemplate string
+	if c.IsBefore54() {
+		jsonTemplate = `{"jsonrpc":"2.0","method":"user.login","params":{"username":"%s","password":"%s"},"id":1}`
+	} else {
+		jsonTemplate = `{"jsonrpc":"2.0","method":"user.login","params":{"username":"%s","password":"%s"},"id":1}`
+	}
+	jsonStr := fmt.Sprintf(jsonTemplate, username, password)
+
+	resp, err := c.PostApi(jsonStr)
+	if err != nil {
+		return "", -1, &ZabbixError{Msg: "Error while API request. (user.login)", Err: err}
+	}
+
+	// expected result
+	// {"jsonrpc":"2.0","result":"057466f9a6cb65b3d57d9460cc792b9b","id":1}
+	byteArray, _ := io.ReadAll(resp.Body)
+	resp.Body.Close()
+	logger.T("Response", string(byteArray)) // htmlをstringで取得
+
+	// parse JSON
+	var decode_data authenticateResult
+	if err := json.Unmarshal(byteArray, &decode_data); err != nil {
+		return "", -1, err
+	}
+
+	// check authorize success
+	if decode_data.Error.Code != 0 {
+		return "", -1, fmt.Errorf("login failed: error %d %s", decode_data.Error.Code, decode_data.Error.Data)
+	}
+
+	// 表示
+	// logger.D(decode_data.Result)
+	return decode_data.Result, 0, nil
+}
+
+// Authenticate to zabbix and get authenticate token
 func AuthenticateAfter54(url string, username string, password string) (string, int, error) {
 	var logger = ylog.GetLogger()
 
 	// zabbix <= 5.2 username is user, zabbix 5.4 or newer, username params is username
 	jsonTemplate := `{"jsonrpc":"2.0","method":"user.login","params":{"username":"%s","password":"%s"},"id":1}`
 	jsonStr := fmt.Sprintf(jsonTemplate, username, password)
-	logger.T("Sending", jsonStr) // htmlをstringで取得
 
 	req, _ := http.NewRequest("POST", url, bytes.NewBuffer([]byte(jsonStr)))
 	req.Header.Set("Content-Type", "application/json")

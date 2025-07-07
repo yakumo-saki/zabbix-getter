@@ -78,11 +78,10 @@ func (c *Client) GetHostId(hostname string) (string, error) {
 				"host": "%s"
 			}
 		},
-		"id": 2,
-		"auth": "%s"
+		"auth": "%s",
+		"id": 2
 	}`
 	jsonStr := fmt.Sprintf(jsonTemplate, hostname, c.Token)
-	logger.T("Response\n", jsonStr)
 
 	resp, err := c.PostApi(jsonStr)
 	if err != nil {

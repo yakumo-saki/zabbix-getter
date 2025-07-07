@@ -1,11 +1,9 @@
 package zabbix
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
 
 	"github.com/yakumo-saki/zabbix-getter/ylog"
 )
@@ -123,18 +121,14 @@ func (c *Client) GetItem(hostId string, itemname string) (ItemResult, error) {
 			},
 			"hostids": ["%s"]
 		},
-		"id": 3,
-		"auth": "%s"
+		"auth": "%s",
+		"id": 3
 	}`
 	jsonStr := fmt.Sprintf(jsonTemplate, itemname, hostId, c.Token)
 
 	logger.T("Request\n", jsonStr)
 
-	req, _ := http.NewRequest("POST", c.Url, bytes.NewBuffer([]byte(jsonStr)))
-	req.Header.Set("Content-Type", "application/json")
-
-	client := new(http.Client)
-	resp, err := client.Do(req)
+	resp, err := c.PostApi(jsonStr)
 	if err != nil {
 		return ItemResult{}, &ZabbixError{Msg: "Error while API request. (item.get)", Err: err}
 	}

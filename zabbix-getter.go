@@ -37,6 +37,7 @@ func main() {
 		ylog.SetLogLevel("WARN")
 	}
 
+	// main
 	zabbix := zabbix.NewClient(cfg.Url, cfg.Username, cfg.Password)
 
 	zabbix.Init()

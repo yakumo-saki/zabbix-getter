@@ -27,18 +27,25 @@ func NewClient(url string, user string, password string) *Client {
 	c.Url = url
 	c.User = user
 	c.Password = password
+
+	c.Token = NOT_INIT
 	c.VersionString = NOT_INIT
 
 	return c
 }
 
+// Initialize
 func (c *Client) Init() {
+	var logger = ylog.GetLogger()
+
 	ver, err := c.GetZabbixVersion()
 	if err != nil {
-		panic("Could not get zabbix version")
+		panic("Could not get zabbix version " + err.Msg)
 	}
 
+	logger.D("Got zabbix version: " + ver)
 	c.VersionString = ver
+
 }
 
 // Logout from zabbix
@@ -93,5 +100,12 @@ func (c *Client) IsAfter70() bool {
 }
 
 func (c *Client) IsInitialized() bool {
-	return c.VersionString == NOT_INIT
+	var logger = ylog.GetLogger()
+
+	if c.VersionString == NOT_INIT {
+		logger.T("Not initialized: " + c.VersionString)
+		return false
+	}
+
+	return true
 }
