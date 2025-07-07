@@ -1,4 +1,4 @@
 package global
 
-const Version string = "v0.9.5"
+const Version string = "v1.0.0"
 const Url string = "https://github.com/yakumo-saki/zabbix-getter/"
