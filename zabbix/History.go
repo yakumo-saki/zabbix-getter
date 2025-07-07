@@ -61,8 +61,8 @@ func (c *Client) GetHistory(url string, token string, itemId string) (HistoryRes
 			"sortorder": "DESC",
 			"limit": 1
 		},
-		"id": 3,
-		"auth": "%s"
+		"auth": "%s",
+		"id": 3
 	}`
 	jsonStr := fmt.Sprintf(jsonTemplate, itemId, token)
 
