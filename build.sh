@@ -45,10 +45,19 @@ function build_unixlike () {
 
 # Windows
 echo Building Windows binary
-GOOS=windows GOARCH=386 go build -o ${BIN_DIR}/${BIN_BASENAME}.exe ${ENTRYPOINT}
-zip ${RELEASE_DIR}/${BIN_BASENAME}_${VERSION}_win32.zip ${BIN_DIR}/${BIN_BASENAME}.exe
+WIN32_DIR=${BUILD_DIR}/Win32
+rm -rf ${WIN32_DIR}
+mkdir ${WIN32_DIR}
+
+GOOS=windows GOARCH=386 go build -o ${WIN32_DIR}/${BIN_BASENAME}.exe ${ENTRYPOINT}
+cp ${WORK_DIR}/LICENSE ${WIN32_DIR}
+cp ${WORK_DIR}/README.md ${WIN32_DIR}
+
+cd ${WIN32_DIR}
+zip -r -j ${RELEASE_DIR}/${BIN_BASENAME}_${VERSION}_win32.zip *
 
 # Unixlike
+cd ${SCRIPT_DIR}
 build_unixlike linux amd64
 build_unixlike linux arm
 build_unixlike linux arm64
